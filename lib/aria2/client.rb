@@ -80,7 +80,8 @@ module Aria2
       end
 
       def request(verb, *args, &block)
-        verb = verb.to_s
+        # camelCase
+        verb = verb.to_s.gsub(/(?:_+)([a-z])/) { $1.upcase }
         # If {verb} end with '!', when the JSON RPC response contain 'error' key,
         # then raise Aria2::Error
         raise_on_error = !verb.chomp!('!').nil?

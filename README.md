@@ -24,6 +24,8 @@ Or install it yourself as:
   # create a client instance
   client = Aria2::Client.new(host: 'localhost', port: 6800)
   client.addUri 'http://example.com/images/1.jpg', 'http://example.com/images/2.jpg'
+  # or
+  client.add_uri 'http://example.com/images/1.jpg', 'http://example.com/images/2.jpg'
   client.xxxx
   ...
   
@@ -47,7 +49,7 @@ Or install it yourself as:
   
 ```
 
-  ### Suport Methods
+  ### Suport Methods (snakecase or camelCase)
 
   - addUri(*uris)
   - addTorrent(torrent)
