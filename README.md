@@ -87,5 +87,5 @@ Or install it yourself as:
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/songjiz/aria2.
+Bug reports and pull requests are welcome on GitHub at https://github.com/songjiz/aria2-ruby.
 
