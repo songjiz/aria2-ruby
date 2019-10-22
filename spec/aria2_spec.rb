@@ -1,18 +1,16 @@
 require 'spec_helper'
 
 describe Aria2 do
-
   before(:all) do
-    @client = Aria2::Client.new token: 'your_token'
+    @client = Aria2::Client.new
   end
 
   it 'getVersion' do
     response = @client.getVersion
-    expect(response['error']['code']).to eql 1
+    expect(response.result).to include('version')
   end
 
   it 'getVersion!' do
-    expect { @client.getVersion! }.to raise_error(Aria2::Error)
+    expect { @client.getVersion! }.not_to raise_error
   end
-
 end

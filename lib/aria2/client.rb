@@ -1,47 +1,11 @@
 require 'json'
-require 'net/http'
+require 'net/https'
 require 'uri'
 require 'base64'
 require 'aria2/response'
 require 'aria2/error'
+
 module Aria2
-  # Aria2 JSON RPC Client
-  #
-  # Method: https://aria2.github.io/manual/en/html/aria2c.html#methods
-  # - addUri(*uris)
-  # - addTorrent(torrent)
-  #   torrent is the contents of the ".torrent" file
-  # - addMetalink(metalink)
-  # - remove(gid)
-  # - forceRemove(gid)
-  # - pause(gid)
-  # - pauseAll
-  # - forcePause(gid)
-  # - forcePauseAll
-  # - unpause(gid)
-  # - unpauseAll
-  # - tellStatus(gid)
-  # - getUris(gid)
-  # - getFiles(gid)
-  # - getPeers(gid)
-  # - getServers(gid)
-  # - tellActive
-  # - tellWaiting(offset, num)
-  # - tellStopped(offset, num)
-  # - changePosition(gid, pos, how)
-  # - changeUri(gid, fileIndex, delUris, addUris)
-  # - getOption(gid)
-  # - changeOption(gid, options)
-  # - getGlobalOption
-  # - changeGlobalOption(options)
-  # - getGlobalStat
-  # - purgeDownloadResult
-  # - removeDownloadResult(gid)
-  # - getVersion
-  # - shutdown
-  # - forceShutdown
-  # - saveSession
-  #
   class Client
 
     DEFAULT_HOST = 'localhost'.freeze
@@ -58,10 +22,10 @@ module Aria2
     end
 
     def rpc_url
-      "#{schema}://#{host}:#{port}/jsonrpc"
+      "#{protocol}://#{host}:#{port}/jsonrpc"
     end
 
-    def schema
+    def protocol
       secure? ? :https : :http
     end
 
@@ -80,21 +44,17 @@ module Aria2
       end
 
       def request(verb, *args, &block)
-        # camelCase
         verb = verb.to_s.gsub(/(?:_+)([a-z])/) { $1.upcase }
-        # If {verb} end with '!', when the JSON RPC response contain 'error' key,
-        # then raise Aria2::Error
         raise_on_error = !verb.chomp!('!').nil?
-        paylod = ({
+        uri = URI(rpc_url)
+        uri.query = URI.encode_www_form(
           jsonrpc: RPC_VERSION,
           id: "#{Time.now.to_i}",
           method: "aria2.#{verb}",
           params: build_params(*args)
-        })
-        uri = URI rpc_url
-        uri.query = URI.encode_www_form paylod
-        http_response = ::Net::HTTP.get_response uri
-        response  = Response.new http_response
+        )
+        http_response = ::Net::HTTP.get_response(uri)
+        response = Response.new(http_response)
         if response.error? && raise_on_error
           raise Aria2::Error.from_response(response)
         else
@@ -106,11 +66,11 @@ module Aria2
         end
       end
 
+      # Base64-encoded JSON array
       def build_params(*args)
         params = ["token:#{@token}", args]
-        # The params parameter is Base64-encoded JSON array
         Base64.encode64 JSON.dump(params)
       end
 
-  end # Client
-end # Aria2
+  end
+end

@@ -50,6 +50,7 @@ Or install it yourself as:
 ```
 
   ### Suport Methods (snakecase or camelCase)
+  See [Methods](https://aria2.github.io/manual/en/html/aria2c.html#methods)
 
   - addUri(*uris)
   - addTorrent(torrent)

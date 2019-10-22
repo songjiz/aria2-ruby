@@ -1,8 +1,7 @@
 require 'json'
+
 module Aria2
   class Response
-
-    attr_reader :payload
 
     def initialize(http_response)
       @http_response = http_response
@@ -13,15 +12,11 @@ module Aria2
     end
 
     def payload
-      @payload ||= JSON.parse @http_response.body
+      @payload ||= JSON.parse(@http_response.body)
     end
 
     def error?
       payload.key? 'error'
-    end
-
-    def error
-      payload['error']
     end
 
     def ok?
@@ -40,5 +35,5 @@ module Aria2
       RUBY
     end
 
-  end # Response
-end # Aria2
+  end
+end

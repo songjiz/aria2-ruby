@@ -17,5 +17,5 @@ module Aria2
       { code: code, message: message }
     end
 
-  end # Error
-end # Aria2
+  end
+end
